@@ -1,23 +1,8 @@
-/*!
-
-=========================================================
-* BLK Design System React - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/blk-design-system-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/blk-design-system-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import classnames from "classnames";
 import { Link } from "react-router-dom";
+import firebase from 'firebase';
+import '../Conexao';
 // reactstrap components
 import {
   Button,
@@ -44,6 +29,40 @@ import IndexNavbar from "components/Navbars/IndexNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 
 class Veiculo extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      veiculo: '',
+      anoV: '',
+      numeroMP: '',
+      placa: '',
+      informacoesA: '',
+    }
+    this.Cadastrar = this.Cadastrar.bind(this);
+  }
+
+    Cadastrar(e){
+      firebase.auth().onAuthStateChanged((user) => {
+      if(user){
+      firebase.database().ref('usuario').child(user.uid).set({
+        veiculo:this.state.veiculo,
+        anoV: this.state.anoV,
+        numeroMP: this.state.numeroMP,
+        placa: this.state.placa,
+        informacoesA: this.state.informacoesA
+      }.then(() => {
+        alert('cadastrado')
+      }))
+
+      .then(()=>{
+        this.setState({
+          
+        })
+      });
+    }
+    });
+  }
+  
   state = {
     squares1to6: "",
     squares7and8: ""
@@ -91,28 +110,24 @@ class Veiculo extends React.Component {
                     <div
                       className="square square-7"
                       id="square7"
-                      style={{ transform: this.state.squares7and8 }}
-                    />
+                      style={{ transform: this.state.squares7and8 }}/>
                     <div
                       className="square square-8"
                       id="square8"
-                      style={{ transform: this.state.squares7and8 }}
-                    />
+                      style={{ transform: this.state.squares7and8 }}/>
                     <Card className="card-register">
                       <CardHeader>
                         <CardImg
                           alt="..."
-                          src={require("assets/img/square-purple-1.png")}
-                        />
+                          src={require("assets/img/square-purple-1.png")}/>
                         <CardTitle tag="h4">Veículo</CardTitle>
                       </CardHeader>
                       <CardBody>
-                        <Form className="form">
+                        <Form className="form" onSubmit={this.Cadastrar}>
                           <InputGroup
                             className={classnames({
                               "input-group-focus": this.state.fullNameFocus
-                            })}
-                          >
+                            })}>
                             <InputGroupAddon addonType="prepend">
                               <InputGroupText>
                                 <i className="tim-icons icon-single-02" />
@@ -125,15 +140,14 @@ class Veiculo extends React.Component {
                                 this.setState({ fullNameFocus: true })
                               }
                               onBlur={e =>
-                                this.setState({ fullNameFocus: false })
-                              }
-                            />
+                                this.setState({ fullNameFocus: false })}
+                                onChange={(e) => this.setState({veiculo:e.target.value})}
+                              /> 
                           </InputGroup>
-						  <InputGroup
+						              <InputGroup
                             className={classnames({
                               "input-group-focus": this.state.fullNameFocus
-                            })}
-                          >
+                            })}>
                             <InputGroupAddon addonType="prepend">
                               <InputGroupText>
                                 <i className="tim-icons icon-single-02" />
@@ -146,17 +160,77 @@ class Veiculo extends React.Component {
                                 this.setState({ fullNameFocus: true })
                               }
                               onBlur={e =>
-                                this.setState({ fullNameFocus: false })
+                                this.setState({ fullNameFocus: false })}
+                                onChange={(e) => this.setState({numeroMP:e.target.value})}
+                                /> 
+                          </InputGroup>
+                          <InputGroup
+                            className={classnames({
+                              "input-group-focus": this.state.fullNameFocus
+                            })}>
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="tim-icons icon-single-02" />
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input
+                              placeholder="Ano do veiculo"
+                              type="number"
+                              onFocus={e =>
+                                this.setState({ fullNameFocus: true })
                               }
+                              onBlur={e =>
+                                this.setState({ fullNameFocus: false })}
+                                onChange={(e) => this.setState({anoV:e.target.value})}
+                              /> 
+                          </InputGroup>
+                          <InputGroup
+                            className={classnames({
+                              "input-group-focus": this.state.fullNameFocus
+                            })}
+                          >
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="tim-icons icon-single-02" />
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input
+                              placeholder="Placa do Veículo"
+                              type="text"
+                              onFocus={e =>
+                                this.setState({ fullNameFocus: true })
+                              }
+                              onBlur={e =>this.setState({ fullNameFocus: false })}
+                              onChange={(e) => this.setState({placa:e.target.value})}
                             />
                           </InputGroup>
+                          <InputGroup
+                            className={classnames({
+                              "input-group-focus": this.state.fullNameFocus
+                            })}
+                          >
+                            <InputGroupAddon addonType="prepend">
+                              <InputGroupText>
+                                <i className="tim-icons icon-single-02" />
+                              </InputGroupText>
+                            </InputGroupAddon>
+                            <Input
+                              placeholder="Informações adicionais"
+                              type="text"
+                              onFocus={e =>
+                                this.setState({ fullNameFocus: true })
+                              }
+                              onBlur={e =>this.setState({ fullNameFocus: false })}
+                              onChange={(e) => this.setState({informacoesA:e.target.value})}
+                            />
+                          </InputGroup>
+                          <Button className="btn-round" color="primary" size="lg"tag={Link}to="/dashboard" type='submit'>
+                          Cadastrar
+                        </Button>
                         </Form>
                       </CardBody>
                       <CardFooter>
-                        <Button className="btn-round" color="primary" size="lg"
-						tag={Link}
-						to="/dashboard"
-						>
+                        <Button className="btn-round" color="primary" size="lg"tag={Link}to="/dashboard">
                           Voltar
                         </Button>
                       </CardFooter>

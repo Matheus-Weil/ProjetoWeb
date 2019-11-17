@@ -59,6 +59,11 @@ class Dashboard extends React.Component {
       this.followCursor
     );
   }
+
+  componentWillUpdate(nextProps, nextState){
+    localStorage.setItem('contatos', JSON.stringify(nextState.nextProps));
+  }
+
   followCursor = event => {
     let posX = event.clientX - window.innerWidth / 2;
     let posY = event.clientY - window.innerWidth / 6;
@@ -98,13 +103,23 @@ class Dashboard extends React.Component {
                       id="square8"
                       style={{ transform: this.state.squares7and8 }}
                     />
-                    <Card className="card-register">
+                    <Card className="card-register" style={{width: 250}}>
                       <CardBody>
                          <Button className="btn-round" color="primary" size="lg"
 						 tag={Link}
 						 to="/veiculo"
 						 >
                           Adicionar veículo
+                        </Button>
+                      </CardBody>
+                      <CardBody>
+                         <Button className="btn-round" color="primary" size="lg"tag={Link}to="/NovaPostagem">
+                          Nova Publicação
+                        </Button>
+                      </CardBody>
+                      <CardBody>
+                         <Button className="btn-round" color="primary" size="lg"tag={Link}to="/NovaPostagem">
+                          Nova Rota
                         </Button>
                       </CardBody>
                     </Card>
