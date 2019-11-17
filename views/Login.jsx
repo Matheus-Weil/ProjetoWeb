@@ -1,22 +1,7 @@
-/*!
-
-=========================================================
-* BLK Design System React - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/blk-design-system-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/blk-design-system-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
 import React from "react";
 import classnames from "classnames";
+import '../Conexao';
+import firebase from 'firebase';
 // reactstrap components
 import {
   Button,
@@ -43,6 +28,36 @@ import IndexNavbar from "components/Navbars/IndexNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 
 class Login extends React.Component {
+  constructor(props){
+    super(props);
+    this.State = {
+        email: '',
+        senha: '',
+        erro: ''
+    }
+  
+  this.logar = this.logar.bind(this);
+      
+  }
+  
+  logar(e){ 
+      firebase.auth().signInWithEmailAndPassword(this.state.email, this.state.senha)
+      .then(()=>{
+          this.props.history.replace("/DashBoard");
+      })
+      .catch((error) => {
+          if(error.code === 'auth/user-not-found'){
+              alert('E-mail ou senha incorreto!')
+          }
+          else{
+              alert(error.code)
+          }
+      })
+      e.preventDefault();
+      /*firebase.storage().ref('images/'+this.state.uid + '/' + this.state.imagem.name).getDownloadURL().then((url) => {
+          this.setState({url: url});
+      }) */
+  }
   state = {
     squares1to6: "",
     squares7and8: ""
@@ -106,7 +121,7 @@ class Login extends React.Component {
                         <CardTitle tag="h4">login</CardTitle>
                       </CardHeader>
                       <CardBody>
-                        <Form className="form">
+                        <Form className="form" onSubmit={this.logar}>
                           <InputGroup
                             className={classnames({
                               "input-group-focus": this.state.fullNameFocus
@@ -119,13 +134,14 @@ class Login extends React.Component {
                             </InputGroupAddon>
                             <Input
                               placeholder="Usuário"
-                              type="text"
+                              type="email"
                               onFocus={e =>
                                 this.setState({ fullNameFocus: true })
                               }
                               onBlur={e =>
                                 this.setState({ fullNameFocus: false })
-                              }
+                              }  
+                              onChange={(e) => this.setState({email:e.target.value})}
                             />
                           </InputGroup>
                           <InputGroup
@@ -147,15 +163,17 @@ class Login extends React.Component {
                               onBlur={e =>
                                 this.setState({ passwordFocus: false })
                               }
+                              onChange={(e) => this.setState({senha:e.target.value})}
                             />
                           </InputGroup>
-                        </Form>
-                      </CardBody>
-                      <CardFooter>
+                          <CardFooter>
                         <Button className="btn-round" color="primary" size="lg">
                           Entrar
                         </Button>
                       </CardFooter>
+                        </Form>
+                      </CardBody>
+                      
                     </Card>
                   </Col>
                 </Row>

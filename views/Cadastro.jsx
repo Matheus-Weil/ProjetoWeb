@@ -1,20 +1,5 @@
-/*!
-
-=========================================================
-* BLK Design System React - v1.0.0
-=========================================================
-
-* Product Page: https://www.creative-tim.com/product/blk-design-system-react
-* Copyright 2019 Creative Tim (https://www.creative-tim.com)
-* Licensed under MIT (https://github.com/creativetimofficial/blk-design-system-react/blob/master/LICENSE.md)
-
-* Coded by Creative Tim
-
-=========================================================
-
-* The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-*/
+import firebase from 'firebase';
+import '../Conexao'
 import React from "react";
 import classnames from "classnames";
 // reactstrap components
@@ -43,6 +28,86 @@ import IndexNavbar from "components/Navbars/IndexNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 
 class Cadastro extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = { 
+    nome: '',
+    sobrenome: '',
+    email: '',
+    senha: '',
+    confirmarSenha: '',
+    DataNasc: '',
+    imagem: '',
+    };
+    this.cadastrar = this.cadastrar.bind(this);
+
+      firebase.auth().onAuthStateChanged((user) => {
+        if(user){
+          firebase.database().ref('usuario').child(user.uid).set({
+            nome:this.state.nome,
+            email: this.state.email,
+            senha: this.state.senha,
+            DataNasc: this.state.DataAniver,
+            //imagem: this.state.url
+          })
+
+          .then(()=>{
+            this.setState({
+              nome:'',
+              email:'',
+              senha:''
+            })
+          });
+        }
+      });
+      
+    }
+    
+      //firebase.auth().signOut();
+     
+    cadastrar(e){
+        firebase.auth().createUserWithEmailAndPassword(this.state.email, this.state.senha)
+        .then((success) => {
+            alert('Cadastrado com sucesso!');
+            this.props.history.replace("/DashBoard");
+        })
+        .catch((error) => {
+            if(error.code === 'auth/invalid-email'){
+                alert('E-mail inválido');
+            }
+            if(error.code === 'auth/weak-password'){
+                alert('Senha fraca')
+            }
+        })
+        e.preventDefault();
+    }
+
+    file = async(e) => {
+        var imagem = e.target.files[0];
+        await this.setState({imagem :imagem});
+        var uploadFile = firebase.storage()
+        .ref('images/' + this.state.uid + '/' + this.state.imagem.name)
+        .put(this.state.imagem);
+  
+        uploadFile.on('state_changed',
+        (progresso)=>{
+           var progress = Math.round(
+          (progresso.bytesTransferred / progresso.totalBytes) * 100 
+        );
+        this.setState({qtdeLoading: progress });
+        },
+        (error)=>{
+  
+        },  
+        ()=>{
+          firebase.storage().ref('images/' + this.state.uid + '/' + this.state.imagem.name)
+          .getDownloadURL()
+          .then((url) => {
+            this.setState({url: url});
+        });
+      });    
+    }
+
   state = {
     squares1to6: "",
     squares7and8: ""
@@ -106,7 +171,7 @@ class Cadastro extends React.Component {
                         <CardTitle tag="h4">cadastro</CardTitle>
                       </CardHeader>
                       <CardBody>
-                        <Form className="form">
+                        <Form className="form" onSubmit={this.cadastrar}>
                           <InputGroup
                             className={classnames({
                               "input-group-focus": this.state.fullNameFocus
@@ -125,7 +190,7 @@ class Cadastro extends React.Component {
                               }
                               onBlur={e =>
                                 this.setState({ fullNameFocus: false })
-                              }
+                              } onChange={(e) => this.setState({nome:e.target.value})}
                             />
                           </InputGroup>
 						  <InputGroup
@@ -161,9 +226,10 @@ class Cadastro extends React.Component {
                             </InputGroupAddon>
                             <Input
                               placeholder="Email"
-                              type="text"
+                              type="email"
                               onFocus={e => this.setState({ emailFocus: true })}
                               onBlur={e => this.setState({ emailFocus: false })}
+                              onChange={(e) => this.setState({email:e.target.value})}
                             />
                           </InputGroup>
                           <InputGroup
@@ -184,7 +250,8 @@ class Cadastro extends React.Component {
                               }
                               onBlur={e =>
                                 this.setState({ passwordFocus: false })
-                              }
+                              } 
+                              onChange={(e) => this.setState({senha:e.target.value})}
                             />
                           </InputGroup>
 						  <InputGroup
@@ -219,14 +286,14 @@ class Cadastro extends React.Component {
                               </InputGroupText>
                             </InputGroupAddon>
                             <Input
-                              placeholder="Aniversário"
-                              type="text"
+                              placeholder="Data de Nascimento"
+                              type="date"
                               onFocus={e =>
                                 this.setState({ passwordFocus: true })
                               }
                               onBlur={e =>
                                 this.setState({ passwordFocus: false })
-                              }
+                              } onChange={(e) => this.setState({DataAniver:e.target.value})}
                             />
                           </InputGroup>
 						  <InputGroup
@@ -234,21 +301,6 @@ class Cadastro extends React.Component {
                               "input-group-focus": this.state.passwordFocus
                             })}
                           >
-                            <InputGroupAddon addonType="prepend">
-                              <InputGroupText>
-                                <i className="tim-icons icon-lock-circle" />
-                              </InputGroupText>
-                            </InputGroupAddon>
-                            <Input
-                              placeholder="Sexo"
-                              type="text"
-                              onFocus={e =>
-                                this.setState({ passwordFocus: true })
-                              }
-                              onBlur={e =>
-                                this.setState({ passwordFocus: false })
-                              }
-                            />
                           </InputGroup>
                           <FormGroup check className="text-left">
                             <Label check>
@@ -263,13 +315,13 @@ class Cadastro extends React.Component {
                               .
                             </Label>
                           </FormGroup>
-                        </Form>
-                      </CardBody>
-                      <CardFooter>
-                        <Button className="btn-round" color="primary" size="lg">
-                          Começar
+                          <CardFooter>
+                        <Button className="btn-round" color="primary" size="lg" type='submit'>
+                          Cadastrar-se
                         </Button>
                       </CardFooter>
+                        </Form>
+                      </CardBody>
                     </Card>
                   </Col>
                 </Row>
@@ -313,5 +365,4 @@ class Cadastro extends React.Component {
     );
   }
 }
-
 export default Cadastro;
