@@ -122,7 +122,7 @@ class Rotas extends React.Component {
                         <CardImg
                           alt="..."
                           src={require("assets/img/square-purple-1.png")}/>
-                        <CardTitle tag="h4">Veículo</CardTitle>
+                        <CardTitle tag="h4">Rota</CardTitle>
                       </CardHeader>
                       <CardBody>
                         <Form className="form" onSubmit={this.Cadastrar}>
@@ -175,6 +175,8 @@ class Rotas extends React.Component {
                                 <i className="tim-icons icon-single-02" />
                               </InputGroupText>
                             </InputGroupAddon>
+							
+							/* Trocar por inputs de pesquisa*/
                             <Input
                               placeholder="Percurso para as Escolas"
                               type="text"
