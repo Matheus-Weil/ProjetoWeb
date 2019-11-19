@@ -29,6 +29,8 @@ import Cadastro from "views/Cadastro.jsx";
 import Login from "views/Login.jsx";
 import Dashboard from "views/Dashboard.jsx";
 import Veiculo from "views/Veiculo.jsx";
+import NovaPostagem from "views/NovaPostagem.jsx";
+import Rota from "views/Rota.jsx";
 
 import ProfilePage from "views/examples/ProfilePage.jsx";
 
@@ -51,6 +53,14 @@ ReactDOM.render(
 	  <Route
         path="/veiculo"
         render={props => <Veiculo {...props} />}
+      />
+	  <Route
+        path="/NovaPostagem"
+        render={props => <NovaPostagem {...props} />}
+      />
+	  <Route
+        path="/Rota"
+        render={props => <Rota {...props} />}
       />
       
       <Route
