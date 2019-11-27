@@ -32,35 +32,36 @@ class Veiculo extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      veiculo: '',
-      anoV: '',
-      numeroMP: '',
-      placa: '',
-      informacoesA: '',
+      modelo: '',
+      ano: '',
+	  placa: '',
+	  capacidade: '',
+      observacoes: '',
     }
     this.Cadastrar = this.Cadastrar.bind(this);
   }
 
     Cadastrar(e){
-      firebase.auth().onAuthStateChanged((user) => {
+      var user = firebase.auth().currentUser;
       if(user){
-      firebase.database().ref('usuario').child(user.uid).set({
-        veiculo:this.state.veiculo,
-        anoV: this.state.anoV,
-        numeroMP: this.state.numeroMP,
-        placa: this.state.placa,
-        informacoesA: this.state.informacoesA
-      }.then(() => {
-        alert('cadastrado')
-      }))
-
+      firebase.database().ref('veiculo').push().set({
+        proprietario: user.uid,
+		modelo: this.state.modelo,
+		ano: this.state.ano,
+		placa: this.state.placa,
+		capacidade: this.state.capacidade,
+		observacoes: this.state.observacoes,
+      })
       .then(()=>{
         this.setState({
-          
+          modelo: '',
+		  ano: '',
+		  placa: '',
+		  capacidade: '',
+		  observacoes: '',
         })
       });
     }
-    });
   }
   
   state = {
@@ -135,13 +136,7 @@ class Veiculo extends React.Component {
                             </InputGroupAddon>
                             <Input
                               placeholder="Modelo"
-                              type="text"
-                              onFocus={e =>
-                                this.setState({ fullNameFocus: true })
-                              }
-                              onBlur={e =>
-                                this.setState({ fullNameFocus: false })}
-                                onChange={(e) => this.setState({veiculo:e.target.value})}
+                                onChange={(e) => this.setState({modelo:e.target.value})}
                               /> 
                           </InputGroup>
 						              <InputGroup
@@ -161,7 +156,7 @@ class Veiculo extends React.Component {
                               }
                               onBlur={e =>
                                 this.setState({ fullNameFocus: false })}
-                                onChange={(e) => this.setState({numeroMP:e.target.value})}
+                                onChange={(e) => this.setState({capacidade:e.target.value})}
                                 /> 
                           </InputGroup>
                           <InputGroup
@@ -176,12 +171,7 @@ class Veiculo extends React.Component {
                             <Input
                               placeholder="Ano do veiculo"
                               type="number"
-                              onFocus={e =>
-                                this.setState({ fullNameFocus: true })
-                              }
-                              onBlur={e =>
-                                this.setState({ fullNameFocus: false })}
-                                onChange={(e) => this.setState({anoV:e.target.value})}
+                                onChange={(e) => this.setState({ano:e.target.value})}
                               /> 
                           </InputGroup>
                           <InputGroup
@@ -197,10 +187,6 @@ class Veiculo extends React.Component {
                             <Input
                               placeholder="Placa do Veículo"
                               type="text"
-                              onFocus={e =>
-                                this.setState({ fullNameFocus: true })
-                              }
-                              onBlur={e =>this.setState({ fullNameFocus: false })}
                               onChange={(e) => this.setState({placa:e.target.value})}
                             />
                           </InputGroup>
@@ -217,14 +203,12 @@ class Veiculo extends React.Component {
                             <Input
                               placeholder="Informações adicionais"
                               type="text"
-                              onFocus={e =>
-                                this.setState({ fullNameFocus: true })
-                              }
-                              onBlur={e =>this.setState({ fullNameFocus: false })}
-                              onChange={(e) => this.setState({informacoesA:e.target.value})}
+                              onChange={(e) => this.setState({observacoes:e.target.value})}
                             />
                           </InputGroup>
-                          <Button className="btn-round" color="primary" size="lg"tag={Link}to="/dashboard" type='submit'>
+                          <Button className="btn" color="success" size="md"
+						  onClick={this.Cadastrar}
+						  >
                           Cadastrar
                         </Button>
                         </Form>

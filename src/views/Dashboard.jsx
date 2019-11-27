@@ -1,4 +1,4 @@
-/*!
+﻿/*!
 
 =========================================================
 * BLK Design System React - v1.0.0
@@ -118,7 +118,7 @@ class Dashboard extends React.Component {
                         </Button>
                       </CardBody>
                       <CardBody>
-                         <Button className="btn-round" color="primary" size="lg"tag={Link}to="/NovaPostagem">
+                         <Button className="btn-round" color="primary" size="lg"tag={Link}to="/Rota">
                           Nova Rota
                         </Button>
                       </CardBody>

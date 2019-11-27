@@ -1,6 +1,5 @@
-﻿import React from "react";
+import React from "react";
 import classnames from "classnames";
-import Optgroup from "../components/Optgroup";
 import { Link } from "react-router-dom";
 import firebase from 'firebase';
 import '../Conexao';
@@ -29,65 +28,48 @@ import {
 import IndexNavbar from "components/Navbars/IndexNavbar.jsx";
 import Footer from "components/Footer/Footer.jsx";
 
-class Rota extends React.Component {
+class Rotas extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      nome: '',
-	  horario: '',
-	  descricao: '',
-	  veiculo: '',
+      NomeRota: 'Nome da rota'
     }
 	
 	this.Cadastrar = this.Cadastrar.bind(this);
-	
-	var user = firebase.auth().currentUser;
-	if (user) {
-		firebase.database().ref("veiculo").on("value", function(snapshot) {
-			snapshot.forEach(function(childSnapshot) {
-				let idProprietario = childSnapshot.child('proprietario').val();
-				if (user.uid == idProprietario) {
-					
-					let key = childSnapshot.key;
-					let modelo = childSnapshot.child('modelo').val();
-					
-				}
-			});
-		}, function (errorObject) {
-		  console.log("The read failed: " + errorObject.code);
-		});
-	}
-	
-	this.opcoes = [
-		{value: '1', label: 'bmw'},
-		{value: '2', label: 'celta'},
-	];
-	
   }
 	
   Cadastrar() {
-
+	alert("Iniciando Cadastro");
+	
 	var user = firebase.auth().currentUser;
 	if (user) {
+		alert("Usuário autenticado");	
+        alert("Nome Rota:" + this.state.NomeRota);	
 		firebase.database().ref('rota').push().set({
-                nome:this.state.nome,
-				motorista:user.uid,
-				horario:this.state.horario,
-				descricao:this.state.descricao,
-				veiculo:this.state.veiculo,
+            NomeRota:this.state.NomeRota,
+            Turno: this.state.Turno,
+            Escolas: this.state.Escolas,
+            Bairros: this.state.Bairros,
+            Veiculo: this.state.Veiculo,
+            informacoesAd: this.state.informacoesAd
         })
 	    .then(()=>{
 			this.setState({
-				nome:'',
-				horario:'',
-				descricao:'',
-				veiculo:'',
+                NomeRota: '',
+                Turno: '',
+                Escolas: '',
+                Bairros: '',
+                Veiculo: '',
+                informacoesAd: ''
 			})
 	    });
 	}
+	else {
+		alert("Usuário não autenticado");	
+	}	
 	
+	 
   }  
-	
 	
   
   
@@ -149,14 +131,9 @@ class Rota extends React.Component {
                           <CardImg
                               alt="..."
                               src={require("assets/img/square-purple-1.png")}/>
-                          <CardTitle tag="h4">Rota</CardTitle>
+                          <CardTitle tag="h4">Veículo</CardTitle>
                         </CardHeader>
                         <CardBody>
-						
-							
-						
-						
-						
                           <Form className="form" >
                             <InputGroup
                                 className={classnames({
@@ -168,56 +145,14 @@ class Rota extends React.Component {
                                 </InputGroupText>
                               </InputGroupAddon>
                               <Input
-                                  placeholder="Nome"
+                                  placeholder="Por qual rota você está procurando?"
                                   type="text"
-                                  onChange={(e) => this.setState({nome:e.target.value})}
-                              />
-								
-                            </InputGroup>
-                            <InputGroup
-                                className={classnames({
-                                  "input-group-focus": this.state.fullNameFocus
-                                })}>
-                              <InputGroupAddon addonType="prepend">
-                                <InputGroupText>
-                                  <i className="tim-icons icon-single-02" />
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <Input placeholder="Horário"
-                                  onChange={(e) => this.setState({horario:e.target.value})}
+                                  onChange={(e) => this.setState({NomeRota:e.target.value})}
                               />
                             </InputGroup>
-                            <InputGroup
-                                className={classnames({
-                                  "input-group-focus": this.state.fullNameFocus
-                                })}>
-                              <InputGroupAddon addonType="prepend">
-                                <InputGroupText>
-                                  <i className="tim-icons icon-single-02" />
-                                </InputGroupText>
-                              </InputGroupAddon>
-                              <Input placeholder="Descrição"
-                                  onChange={(e) => this.setState({descricao:e.target.value})}
-                              />
-                            </InputGroup>
-                            <InputGroup
-                                className={classnames({
-                                  "input-group-focus": this.state.fullNameFocus
-                                })}
-                            >
-                              <InputGroupAddon addonType="prepend">
-                                <InputGroupText>
-                                  <i className="tim-icons icon-single-02" />
-                                </InputGroupText>
-                              </InputGroupAddon>
-							  
-							<Input type="select" onChange={(e) => this.setState({veiculo:e.target.value})}>
-								<Optgroup optionsList={this.opcoes}/>
-							</Input>
-                            </InputGroup>
-                            <Button type="button" onClick={this.Cadastrar}>
-							  Cadastrar {this.state.nome}
-							</Button>
+                            <Button className="btn-round" color="primary" size="lg" type='submit'>
+                              Buscar
+                            </Button>
                           </Form>
                         </CardBody>
                         <CardFooter>
@@ -269,4 +204,4 @@ class Rota extends React.Component {
   }
 }
 
-export default Rota;
+export default Rotas;
